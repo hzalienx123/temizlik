@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Temizlik Takip Sistemi</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f2f2f2; margin: 0; padding: 0; }
+    .container { max-width: 600px; margin: 40px auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    h2, h3 { text-align: center; }
+    label { display: block; margin: 10px 0 5px; }
+    select, input[type="submit"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 15px; }
+    .message { text-align: center; color: green; margin-bottom: 15px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+    th { background-color: #f4f4f4; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Temizlik Kaydı</h2>
+    <form id="temizlikForm">
+      <label for="temizlikci">Temizlikçi Adı:</label>
+      <select id="temizlikci" required>
+        <option value="">Seçiniz</option>
+        <option value="Ahmet">Ahmet</option>
+        <option value="Fatma">Fatma</option>
+        <option value="Mehmet">Mehmet</option>
+      </select>
+
+      <label for="ay">Ay:</label>
+      <select id="ay" required>
+        <option value="">Seçiniz</option>
+        <option value="Ocak">Ocak</option>
+        <option value="Şubat">Şubat</option>
+        <option value="Mart">Mart</option>
+        <option value="Nisan">Nisan</option>
+        <option value="Mayıs">Mayıs</option>
+        <option value="Haziran">Haziran</option>
+        <option value="Temmuz">Temmuz</option>
+        <option value="Ağustos">Ağustos</option>
+        <option value="Eylül">Eylül</option>
+        <option value="Ekim">Ekim</option>
+        <option value="Kasım">Kasım</option>
+        <option value="Aralık">Aralık</option>
+      </select>
+
+      <label for="hafta">Hafta:</label>
+      <select id="hafta" required>
+        <option value="">Seçiniz</option>
+        <option value="1">1. Hafta</option>
+        <option value="2">2. Hafta</option>
+        <option value="3">3. Hafta</option>
+        <option value="4">4. Hafta</option>
+        <option value="5">5. Hafta</option>
+      </select>
+
+      <input type="submit" value="Kaydet">
+      <div class="message" id="mesaj"></div>
+    </form>
+
+    <h3>Kayıtlı Temizlikler</h3>
+    <table id="kayitTablosu">
+      <thead>
+        <tr>
+          <th>Temizlikçi</th>
+          <th>Ay</th>
+          <th>Hafta</th>
+          <th>Tarih</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    function tabloyuGuncelle() {
+      const veriler = JSON.parse(localStorage.getItem("temizlikVerileri")) || [];
+      const tbody = document.querySelector("#kayitTablosu tbody");
+      tbody.innerHTML = "";
+      veriler.forEach(kayit => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${kayit.temizlikci}</td>
+          <td>${kayit.ay}</td>
+          <td>${kayit.hafta}</td>
+          <td>${kayit.tarih}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.getElementById("temizlikForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const temizlikci = document.getElementById("temizlikci").value;
+      const ay = document.getElementById("ay").value;
+      const hafta = document.getElementById("hafta").value;
+
+      const kayit = { temizlikci, ay, hafta, tarih: new Date().toLocaleDateString("tr-TR") };
+      let veriler = JSON.parse(localStorage.getItem("temizlikVerileri")) || [];
+      veriler.push(kayit);
+      localStorage.setItem("temizlikVerileri", JSON.stringify(veriler));
+
+      document.getElementById("mesaj").textContent = "Kayıt başarıyla eklendi.";
+      this.reset();
+      tabloyuGuncelle();
+    });
+
+    // Sayfa yüklendiğinde tabloyu doldur
+    window.onload = tabloyuGuncelle;
+  </script>
+</body>
+</html>
